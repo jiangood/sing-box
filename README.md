@@ -15,16 +15,21 @@
 
 ```bash
 docker run -d --name sing-box --restart unless-stopped \
+  -v sing-box-data:/etc/sing-box \
   -p 2080:2080/tcp \
   -p 2080:2080/udp \
   ghcr.io/jiangood/sing-box:latest
 ```
 
-代理地址 `服务器IP:2080`，HTTP 与 SOCKS5 同端口，出站 direct。用户名固定为 `admin`，密码见日志或凭据文件。端口监听所有网卡，可从公网访问，请确保已配置强密码并放行防火墙端口。
+代理地址 `服务器IP:2080`，HTTP 与 SOCKS5 同端口，出站 direct。用户名固定为 `admin`，密码见日志或数据卷中的凭据文件。端口监听所有网卡，可从公网访问，请确保已配置强密码并放行防火墙端口。
 
-查看首次生成的凭据，同样保存在容器内 `/etc/sing-box/credentials.txt`：
+查看首次生成的凭据（保存在数据卷 `sing-box-data` 中）：
 
 ```bash
+# 直接读取用户名和密码
+docker exec sing-box cat /etc/sing-box/credentials.txt
+
+# 或从首次启动日志中查看
 docker logs sing-box
 ```
 
@@ -40,27 +45,17 @@ docker logs -f sing-box
 docker rm -f sing-box
 ```
 
-## 配置持久化
-
-配置和凭据默认只存在容器内，删除容器即丢失（重跑会重新生成）。如需保留，挂载数据卷：
-
-```bash
-docker run -d --name sing-box --restart unless-stopped \
-  -v sing-box-data:/etc/sing-box \
-  -p 2080:2080/tcp \
-  -p 2080:2080/udp \
-  ghcr.io/jiangood/sing-box:latest
-```
-
-已有的 `config.json` 会直接复用。
-
 ## Windows PC 客户端使用
 
 服务端只提供一个带认证的 Mixed 入口（HTTP 与 SOCKS5 共用 `2080` 端口），Windows 侧不需要安装额外服务，按下文任选一种方式接入即可。
 
 ### 1. 准备信息
 
-从容器日志或 `/etc/sing-box/credentials.txt` 取到后再开始：
+从容器日志或凭据文件取到后再开始，在服务器上执行：
+
+```bash
+docker exec sing-box cat /etc/sing-box/credentials.txt
+```
 
 ```text
 服务器地址：你的服务器公网 IP（或域名）
