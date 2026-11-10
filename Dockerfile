@@ -1,6 +1,5 @@
-# Keep this version aligned with .github/workflows/docker-publish.yml.
-ARG SING_BOX_VERSION=v1.14.4
-FROM ghcr.io/sagernet/sing-box:${SING_BOX_VERSION} AS singbox
+# sing-box core, pinned to the version below. Update it here only.
+FROM ghcr.io/sagernet/sing-box:v1.14.4 AS singbox
 
 # Add a small shell/OpenSSL layer so first boot can create a secure config.
 FROM alpine:3.22
