@@ -54,4 +54,17 @@ docker run -d --name sing-box --restart unless-stopped \
 
 已有的 `config.json` 会直接复用。
 
-工作流只在推送版本标签（例如 `v1.0.0`）时触发，构建并发布多架构镜像，同时更新 `latest`。
+## 版本
+
+镜像标签：
+
+- `latest`：跟随最新发布
+- `v1.0.0`：固定版本，适合需要锁定版本的环境
+
+把示例中的 `latest` 换成版本号即可：
+
+```bash
+docker pull ghcr.io/jiangood/sing-box:v1.0.0
+```
+
+当前内置 sing-box `v1.14.4`。工作流只在推送版本标签（例如 `v1.0.0`）时触发，构建并发布多架构镜像，同时更新 `latest`。
