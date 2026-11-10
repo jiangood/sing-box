@@ -16,6 +16,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # QEMU 用于跨架构构建：runner 是 amd64，但要同时产出 linux/arm64 镜像。
+      # 它向内核注册 binfmt_misc 处理器，让 arm64 二进制在 amd64 上被模拟执行，
+      # 否则 arm64 构建遇到 Dockerfile 里的 RUN 会报 "exec format error"。
+      # 注意：这是软件模拟，arm64 那条链路会明显偏慢。
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
