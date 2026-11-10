@@ -1,0 +1,10 @@
+.git
+.github
+.gitignore
+README.md
+LICENSE
+install.sh
+sing-box.sh
+src
+config/*.bak
+config/*~
