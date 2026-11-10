@@ -96,16 +96,16 @@ curl.exe -x http://用户名:密码@服务器IP:2080 https://api.ipify.org
 
 需要让不认系统代理的程序（游戏、部分桌面客户端）也走代理时，可自行下载安装支持 SOCKS5 认证的开源客户端。用法一致：添加 SOCKS5 节点，填 `服务器IP`、`2080`、用户名和密码，再按各自文档开启 TUN 或进程分流。
 
-- **[Clash Verge Rev](https://github.com/clash-verge-rev/clash-verge-rev)**（国内社区）— 用户最多，基于 mihomo / sing-box 内核
+- **[Clash Verge Rev](https://github.com/clash-verge-rev/clash-verge-rev)** — 用户最多，基于 mihomo / sing-box 内核
   - 优点：维护活跃，系统代理与 TUN 一键切换，规则分流、订阅管理、多平台都齐
   - 缺点：概念较多（profile、规则、DNS），新手要花点时间；常驻内存占用偏高
-- **[v2rayN](https://github.com/2dust/v2rayN)**（国内）— 老牌 Windows 客户端
+- **[v2rayN](https://github.com/2dust/v2rayN)** — 老牌 Windows 客户端
   - 优点：用户多、中文资料全，协议支持广，测速、日志、路由规则等配套齐全
   - 缺点：选项和菜单繁杂，界面偏工具风格；只用 SOCKS5 显得偏重
-- **[FlClash](https://github.com/chen08209/FlClash)**（国内）— 界面简洁的跨平台 Clash 客户端
+- **[FlClash](https://github.com/chen08209/FlClash)** — 界面简洁的跨平台 Clash 客户端
   - 优点：配置与 Clash 通用，Windows / macOS / Linux / Android 一套通吃
   - 缺点：功能深度不如 Clash Verge Rev，迭代较快偶有小问题
-- **[Hiddify](https://github.com/hiddify/hiddify-app)**（国外，伊朗团队）— sing-box 内核，一键连接
+- **[Hiddify](https://github.com/hiddify/hiddify-app)** — sing-box 内核，一键连接
   - 优点：上手最快，跨平台覆盖最广，含移动端
   - 缺点：偏订阅 / 机场导入，手工填单个 SOCKS5 节点不直观
 
@@ -122,22 +122,20 @@ curl.exe -x http://用户名:密码@服务器IP:2080 https://api.ipify.org
 
 服务端凭据与 PC 通用：在客户端里新建 SOCKS5 节点，填 `服务器IP`、`2080`、用户名和密码即可。按热度（GitHub 星标）排序的前四个：
 
-- **[v2rayNG](https://github.com/2dust/v2rayNG)**（国内）— Android 用户最多
+- **[v2rayNG](https://github.com/2dust/v2rayNG)** — Android 用户最多
   - 优点：教程和中文资料最多，支持手填 SOCKS5、分应用代理
   - 缺点：仅 Android，界面偏旧，生态以 v2ray 系协议为主
-- **[FlClash](https://github.com/chen08209/FlClash)**（国内）— Android + 桌面同一套
+- **[FlClash](https://github.com/chen08209/FlClash)** — Android + 桌面同一套
   - 优点：界面现代，配置与 Clash 通用，手机和 PC 可共用配置文件
   - 缺点：功能深度不如 CMFA 和 Clash Verge Rev，版本迭代快
-- **[Clash Meta for Android](https://github.com/MetaCubeX/ClashMetaForAndroid)**（国内社区）— mihomo 内核
+- **[Clash Meta for Android](https://github.com/MetaCubeX/ClashMetaForAndroid)** — mihomo 内核
   - 优点：规则分流能力强，支持 SOCKS5 节点和 TUN 接管
   - 缺点：仅 Android，界面朴素，节点要写 YAML
-- **[sing-box 官方客户端](https://github.com/SagerNet/sing-box)**（国内作者，国际社区）— 与本服务同内核
+- **[sing-box 官方客户端](https://github.com/SagerNet/sing-box)** — 与本服务同内核
   - 优点：内核同源，兼容性最好；Android、iOS、macOS 都有官方版本
   - 缺点：偏配置文件驱动，图形化程度低
 
-iOS 还可用免费的 [Karing](https://github.com/KaringX/karing)（国内社区）、[Hiddify](https://github.com/hiddify/hiddify-app)（国外），或付费闭源的 Shadowrocket（国外公司，App Store 购买，iOS 上用户最多）。
-
-「国内 / 国外」按主要维护团队和文档语言粗略划分，社区项目多为多国协作，仅作参考。
+iOS 还可用免费的 [Karing](https://github.com/KaringX/karing)、[Hiddify](https://github.com/hiddify/hiddify-app)，或付费闭源的 Shadowrocket（App Store 购买，iOS 上用户最多）。
 
 ## 版本
 
