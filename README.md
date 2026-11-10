@@ -6,7 +6,7 @@
 
 ## 特性
 
-- 首次启动自动生成随机用户名和密码，启动前用 `sing-box check` 校验配置
+- 首次启动自动生成随机密码，用户名固定为 `admin`，启动前用 `sing-box check` 校验配置
 - 仅开放 Mixed 入站，默认直连出站，适合本地或内网代理
 
 ## 快速开始
@@ -20,7 +20,7 @@ docker run -d --name sing-box --restart unless-stopped \
   ghcr.io/jiangood/sing-box:latest
 ```
 
-代理地址 `服务器IP:2080`，HTTP 与 SOCKS5 同端口，出站 direct。端口监听所有网卡，可从公网访问，请确保已配置强密码并放行防火墙端口。
+代理地址 `服务器IP:2080`，HTTP 与 SOCKS5 同端口，出站 direct。用户名固定为 `admin`，密码见日志或凭据文件。端口监听所有网卡，可从公网访问，请确保已配置强密码并放行防火墙端口。
 
 查看首次生成的凭据，同样保存在容器内 `/etc/sing-box/credentials.txt`：
 
@@ -53,6 +53,91 @@ docker run -d --name sing-box --restart unless-stopped \
 ```
 
 已有的 `config.json` 会直接复用。
+
+## Windows PC 客户端使用
+
+服务端只提供一个带认证的 Mixed 入口（HTTP 与 SOCKS5 共用 `2080` 端口），Windows 侧不需要安装额外服务，按下文任选一种方式接入即可。
+
+### 1. 准备信息
+
+从容器日志或 `/etc/sing-box/credentials.txt` 取到后再开始：
+
+```text
+服务器地址：你的服务器公网 IP（或域名）
+端口：2080
+用户名：admin
+密码：一串 48 位十六进制字符
+```
+
+用户名固定为 `admin`；密码由 `openssl rand -hex` 生成，只含 `0-9a-f`，放进 URL 时无需转义。
+
+### 2. 先用命令行验证
+
+确认网络和凭据都没问题，再配置系统代理：
+
+```powershell
+curl.exe -x http://用户名:密码@服务器IP:2080 https://api.ipify.org
+```
+
+返回的 IP 与服务端出口一致即说明可用。若卡住超时，先检查防火墙 / 安全组是否放行了 `2080/tcp`。
+
+### 3. 方式一：Windows 系统代理（推荐，最简单）
+
+适用于 Edge、Chrome、以及大部分使用系统代理的桌面程序。
+
+1. 打开 **设置 → 网络和 Internet → 代理**
+2. 在「手动设置代理」中启用 **使用代理服务器**
+3. 地址填 `服务器IP`，端口填 `2080`，保存
+4. 首次被应用访问时，Windows 会弹出凭据窗口，输入用户名和密码并勾选记住即可
+
+系统代理只支持 HTTP 协议。需要 SOCKS5（例如要代理 UDP）时，用支持 SOCKS5 的客户端工具，见方式二。PowerShell、`curl`、`git` 等命令行工具不走系统代理，需要时按上面的验证命令显式指定代理参数。
+
+### 4. 方式二：全局接管（开源客户端）
+
+需要让不认系统代理的程序（游戏、部分桌面客户端）也走代理时，可自行下载安装支持 SOCKS5 认证的开源客户端。用法一致：添加 SOCKS5 节点，填 `服务器IP`、`2080`、用户名和密码，再按各自文档开启 TUN 或进程分流。
+
+- **[Clash Verge Rev](https://github.com/clash-verge-rev/clash-verge-rev)**（国内社区）— 用户最多，基于 mihomo / sing-box 内核
+  - 优点：维护活跃，系统代理与 TUN 一键切换，规则分流、订阅管理、多平台都齐
+  - 缺点：概念较多（profile、规则、DNS），新手要花点时间；常驻内存占用偏高
+- **[v2rayN](https://github.com/2dust/v2rayN)**（国内）— 老牌 Windows 客户端
+  - 优点：用户多、中文资料全，协议支持广，测速、日志、路由规则等配套齐全
+  - 缺点：选项和菜单繁杂，界面偏工具风格；只用 SOCKS5 显得偏重
+- **[FlClash](https://github.com/chen08209/FlClash)**（国内）— 界面简洁的跨平台 Clash 客户端
+  - 优点：配置与 Clash 通用，Windows / macOS / Linux / Android 一套通吃
+  - 缺点：功能深度不如 Clash Verge Rev，迭代较快偶有小问题
+- **[Hiddify](https://github.com/hiddify/hiddify-app)**（国外，伊朗团队）— sing-box 内核，一键连接
+  - 优点：上手最快，跨平台覆盖最广，含移动端
+  - 缺点：偏订阅 / 机场导入，手工填单个 SOCKS5 节点不直观
+
+这类工具会改写整机路由，不用时先关闭接管模式再退出，避免断网。
+
+### 注意事项
+
+- 系统代理是明文 HTTP 代理，凭据也随请求头发送。建议只在可信网络使用，或在前置反向代理上加 TLS
+- 服务端出站是 `direct`，即代理只做协议转换，不提供翻墙能力；跨地域访问速度取决于链路质量
+- 修改系统代理后记得在不用时关闭，否则断网状态下所有应用都会连接超时
+- 若同一台 PC 与服务器同处内网，可把 `服务器IP` 换成内网地址，省去防火墙放行
+
+## 手机端客户端
+
+服务端凭据与 PC 通用：在客户端里新建 SOCKS5 节点，填 `服务器IP`、`2080`、用户名和密码即可。按热度（GitHub 星标）排序的前四个：
+
+- **[v2rayNG](https://github.com/2dust/v2rayNG)**（国内）— Android 用户最多
+  - 优点：教程和中文资料最多，支持手填 SOCKS5、分应用代理
+  - 缺点：仅 Android，界面偏旧，生态以 v2ray 系协议为主
+- **[FlClash](https://github.com/chen08209/FlClash)**（国内）— Android + 桌面同一套
+  - 优点：界面现代，配置与 Clash 通用，手机和 PC 可共用配置文件
+  - 缺点：功能深度不如 CMFA 和 Clash Verge Rev，版本迭代快
+- **[Clash Meta for Android](https://github.com/MetaCubeX/ClashMetaForAndroid)**（国内社区）— mihomo 内核
+  - 优点：规则分流能力强，支持 SOCKS5 节点和 TUN 接管
+  - 缺点：仅 Android，界面朴素，节点要写 YAML
+- **[sing-box 官方客户端](https://github.com/SagerNet/sing-box)**（国内作者，国际社区）— 与本服务同内核
+  - 优点：内核同源，兼容性最好；Android、iOS、macOS 都有官方版本
+  - 缺点：偏配置文件驱动，图形化程度低
+
+iOS 还可用免费的 [Karing](https://github.com/KaringX/karing)（国内社区）、[Hiddify](https://github.com/hiddify/hiddify-app)（国外），或付费闭源的 Shadowrocket（国外公司，App Store 购买，iOS 上用户最多）。
+
+「国内 / 国外」按主要维护团队和文档语言粗略划分，社区项目多为多国协作，仅作参考。
 
 ## 版本
 

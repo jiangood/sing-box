@@ -9,7 +9,7 @@ mkdir -p "${CONFIG_DIR}" /var/lib/sing-box
 
 if [ ! -s "${CONFIG_FILE}" ]; then
   umask 077
-  USERNAME="sb$(openssl rand -hex 4)"
+  USERNAME="admin"
   PASSWORD="$(openssl rand -hex 24)"
   cat > "${CONFIG_FILE}" <<EOF
 {
