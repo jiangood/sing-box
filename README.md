@@ -15,12 +15,12 @@
 
 ```bash
 docker run -d --name sing-box --restart unless-stopped \
-  -p 127.0.0.1:2080:2080/tcp \
-  -p 127.0.0.1:2080:2080/udp \
+  -p 2080:2080/tcp \
+  -p 2080:2080/udp \
   ghcr.io/jiangood/sing-box:latest
 ```
 
-代理地址 `127.0.0.1:2080`，HTTP 与 SOCKS5 同端口，出站 direct。端口只监听回环地址，不会暴露到公网。
+代理地址 `服务器IP:2080`，HTTP 与 SOCKS5 同端口，出站 direct。端口监听所有网卡，可从公网访问，请确保已配置强密码并放行防火墙端口。
 
 查看首次生成的凭据，同样保存在容器内 `/etc/sing-box/credentials.txt`：
 
@@ -47,8 +47,8 @@ docker rm -f sing-box
 ```bash
 docker run -d --name sing-box --restart unless-stopped \
   -v sing-box-data:/etc/sing-box \
-  -p 127.0.0.1:2080:2080/tcp \
-  -p 127.0.0.1:2080:2080/udp \
+  -p 2080:2080/tcp \
+  -p 2080:2080/udp \
   ghcr.io/jiangood/sing-box:latest
 ```
 
