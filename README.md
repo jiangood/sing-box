@@ -1,115 +1,84 @@
-# 介绍
+# sing-box Docker Image
 
-最好用的 sing-box 一键安装脚本 & 管理脚本
+一个精简的 sing-box 运行镜像项目。容器只负责运行官方 sing-box 核心，不再包含 VPS 一键安装脚本、交互式管理菜单、systemd/OpenRC、Caddy 或系统调优功能。
 
-# 特点
+## 镜像
 
-- 快速安装
-- 无敌好用
-- 零学习成本
-- 自动化 TLS
-- 简化所有流程
-- 兼容 sing-box 命令
-- 强大的快捷参数
-- 支持所有常用协议
-- 一键添加 VLESS-REALITY (默认)
-- 一键添加 TUIC
-- 一键添加 Trojan
-- 一键添加 Hysteria2
-- 一键添加 AnyTLS
-- 一键添加 Shadowsocks 2022
-- 一键添加 VMess-(TCP/HTTP/QUIC)
-- 一键添加 VMess-(WS/H2/HTTPUpgrade)-TLS
-- 一键添加 VLESS-(WS/H2/HTTPUpgrade)-TLS
-- 一键添加 Trojan-(WS/H2/HTTPUpgrade)-TLS
-- 一键启用 BBR
-- 一键更改伪装网站
-- 一键更改 (端口/UUID/密码/域名/路径/加密方式/SNI/等...)
-- 还有更多...
-
-# 设计理念
-
-设计理念为：**高效率，超快速，极易用**
-
-脚本基于作者的自身使用需求，以 **多配置同时运行** 为核心设计
-
-并且专门优化了，添加、更改、查看、删除、这四项常用功能
-
-你只需要一条命令即可完成 添加、更改、查看、删除、等操作
-
-例如，添加一个配置仅需不到 1 秒！瞬间完成添加！其他操作亦是如此！
-
-脚本的参数非常高效率并且超级易用，请掌握参数的使用
-
-# 文档
-
-安装及使用：https://233boy.com/sing-box/sing-box-script/
-
-# 帮助
-
-使用：`sing-box help`
-
+```text
+ghcr.io/jiangood/sing-box:latest
 ```
-sing-box script v1.0 by 233boy
-Usage: sing-box [options]... [args]...
 
-基本:
-   v, version                                      显示当前版本
-   ip                                              返回当前主机的 IP
-   pbk                                             同等于 sing-box generate reality-keypair
-   get-port                                        返回一个可用的端口
-   ss2022                                          返回一个可用于 Shadowsocks 2022 的密码
+支持 `linux/amd64` 和 `linux/arm64`。镜像以官方 `ghcr.io/sagernet/sing-box` 为基础，不在本项目中重新编译核心。
 
-一般:
-   a, add [protocol] [args... | auto]              添加配置
-   c, change [name] [option] [args... | auto]      更改配置
-   d, del [name]                                   删除配置**
-   i, info [name]                                  查看配置
-   qr [name]                                       二维码信息
-   url [name]                                      URL 信息
-   log                                             查看日志
-更改:
-   full [name] [...]                               更改多个参数
-   id [name] [uuid | auto]                         更改 UUID
-   host [name] [domain]                            更改域名
-   port [name] [port | auto]                       更改端口
-   path [name] [path | auto]                       更改路径
-   passwd [name] [password | auto]                 更改密码
-   key [name] [Private key | auto] [Public key]    更改密钥
-   method [name] [method | auto]                   更改加密方式
-   sni [name] [ ip | domain]                       更改 serverName
-   new [name] [...]                                更改协议
-   web [name] [domain]                             更改伪装网站
+## 快速启动
 
-进阶:
-   dns [...]                                       设置 DNS
-   dd, ddel [name...]                              删除多个配置**
-   fix [name]                                      修复一个配置
-   fix-all                                         修复全部配置
-   fix-caddyfile                                   修复 Caddyfile
-   fix-config.json                                 修复 config.json
-   import                                          导入 sing-box/v2ray 脚本配置
+1. 克隆仓库并编辑 `config/config.json`。
+2. 启动容器：
 
-管理:
-   un, uninstall                                   卸载
-   u, update [core | sh | caddy] [ver]             更新
-   U, update.sh                                    更新脚本
-   s, status                                       运行状态
-   start, stop, restart [caddy]                    启动, 停止, 重启
-   t, test                                         测试运行
-   reinstall                                       重装脚本
-
-测试:
-   debug [name]                                    显示一些 debug 信息, 仅供参考
-   gen [...]                                       同等于 add, 但只显示 JSON 内容, 不创建文件, 测试使用
-   no-auto-tls [...]                               同等于 add, 但禁止自动配置 TLS, 可用于 *TLS 相关协议
-其他:
-   bbr                                             启用 BBR, 如果支持
-   bin [...]                                       运行 sing-box 命令, 例如: sing-box bin help
-   [...] [...]                                     兼容绝大多数的 sing-box 命令, 例如: sing-box generate uuid
-   h, help                                         显示此帮助界面
-
-谨慎使用 del, ddel, 此选项会直接删除配置; 无需确认
-反馈问题) https://github.com/233boy/sing-box/issues
-文档(doc) https://233boy.com/sing-box/sing-box-script/
+```bash
+docker compose up -d
+docker compose logs -f sing-box
 ```
+
+默认示例配置启动一个监听容器 2080 端口的 mixed 入站，并将流量直连。请在公网部署前按自己的用途修改配置、认证信息和监听端口。
+
+## 使用自己的配置
+
+将配置目录挂载到容器的 `/etc/sing-box`。默认启动命令等价于：
+
+```bash
+sing-box -D /var/lib/sing-box -C /etc/sing-box run -c /etc/sing-box/config.json
+```
+
+可以在 Compose 中通过 `command` 覆盖参数。配置文件应符合当前 sing-box 版本的配置格式。
+
+检查配置：
+
+```bash
+docker compose run --rm sing-box check -c /etc/sing-box/config.json
+```
+
+更新并重建容器：
+
+```bash
+docker compose pull
+docker compose up -d
+```
+
+日志直接输出到 Docker stdout/stderr：
+
+```bash
+docker compose logs -f sing-box
+```
+
+## 端口与网络
+
+示例 Compose 映射 TCP 和 UDP 的 2080 端口。若你的配置使用其他端口或协议，请同步调整 `ports`。使用 Hysteria2、TUIC 等 UDP 入站时，务必映射对应 UDP 端口。
+
+若需要 host 网络，可在 Compose 服务中设置 `network_mode: host`，并移除 `ports`；host 网络模式下端口映射不会生效。
+
+## 自定义 sing-box 版本
+
+Dockerfile 的 `SING_BOX_VERSION` 默认值和发布工作流中的 `SING_BOX_VERSION` build-arg 需要保持一致。升级时将两处改为官方 GHCR 中存在的版本标签，然后提交即可触发构建。
+
+## 自动构建
+
+GitHub Actions 在推送到 `main`、推送 `v*` 标签或手动触发时构建并发布镜像到 GHCR，目标平台为 amd64/arm64。Pull Request 只构建验证，不推送镜像。
+
+首次发布后，如希望其他用户无需登录即可拉取，请到 GitHub 仓库的 Packages 页面将该容器包可见性设为 Public。
+
+## 目录结构
+
+```text
+.
+├── .github/workflows/docker-publish.yml
+├── .dockerignore
+├── Dockerfile
+├── docker-compose.yml
+└── config/
+    └── config.json
+```
+
+## 许可
+
+本项目原有许可文件见 [LICENSE](LICENSE)。sing-box 核心由 [SagerNet/sing-box](https://github.com/SagerNet/sing-box) 项目提供。
