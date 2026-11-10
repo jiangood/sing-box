@@ -54,4 +54,4 @@ docker run -d --name sing-box --restart unless-stopped \
 
 已有的 `config.json` 会直接复用。
 
-推送版本标签（例如 `v1.0.0`）会构建并发布多架构镜像，同时更新 `latest`。
+工作流只在推送版本标签（例如 `v1.0.0`）时触发，构建并发布多架构镜像，同时更新 `latest`。

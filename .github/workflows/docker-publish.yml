@@ -2,14 +2,8 @@ name: Docker build and publish
 
 on:
   push:
-    branches:
-      - main
     tags:
       - "v*"
-  pull_request:
-    branches:
-      - main
-  workflow_dispatch:
 
 permissions:
   contents: read
@@ -29,7 +23,6 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Log in to GHCR
-        if: startsWith(github.ref, 'refs/tags/v')
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
@@ -38,7 +31,6 @@ jobs:
 
       - name: Docker metadata
         id: meta
-        if: startsWith(github.ref, 'refs/tags/v')
         uses: docker/metadata-action@v5
         with:
           images: ghcr.io/jiangood/sing-box
@@ -46,18 +38,7 @@ jobs:
             type=ref,event=tag
             type=raw,value=latest
 
-      - name: Build (no publish)
-        if: ${{ !startsWith(github.ref, 'refs/tags/v') }}
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          platforms: linux/amd64,linux/arm64
-          push: false
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
       - name: Build and publish versioned image
-        if: startsWith(github.ref, 'refs/tags/v')
         uses: docker/build-push-action@v6
         with:
           context: .
