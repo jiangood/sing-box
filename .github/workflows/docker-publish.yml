@@ -9,6 +9,11 @@ permissions:
   contents: read
   packages: write
 
+env:
+  # 关闭 buildx 默认生成的构建记录 artifact(.dockerbuild)
+  DOCKER_BUILD_SUMMARY: false
+  DOCKER_BUILD_RECORD_UPLOAD: false
+
 jobs:
   build:
     runs-on: ubuntu-latest
